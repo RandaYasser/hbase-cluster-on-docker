@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+
+        <property>
+        <name>dfs.nameservices</name>
+        <value>hdcluster</value>
+    </property>
+    <property>
+        <name>dfs.ha.namenodes.hdcluster</name>
+        <value>nn1,nn2,nn3</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.hdcluster.nn1</name>
+        <value>master1:8020</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.hdcluster.nn2</name>
+        <value>master2:8020</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.hdcluster.nn3</name>
+        <value>master3:8020</value>
+    </property>
+
+    <property>
+        <name>dfs.namenode.http-address.hdcluster.nn1</name>
+        <value>master1:9870</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address.hdcluster.nn2</name>
+        <value>master2:9870</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address.hdcluster.nn3</name>
+        <value>master3:9870</value>
+    </property>
+
+    <property>
+        <name>dfs.journalnode.edits.dir</name>
+        <value>/hadoop/dfs/journal</value>
+    </property>
+    <property>
+        <name>dfs.namenode.shared.edits.dir</name>
+        <value>qjournal://master1:8485;master2:8485;master3:8485/hdcluster</value>
+    </property>
+    <property>
+        <name>dfs.client.failover.proxy.provider.hdcluster</name>
+        <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+    </property>
+    <property>
+        <name>dfs.ha.fencing.methods</name>
+        <value>shell(/bin/true)</value>
+    </property>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://hdcluster</value>
+ </property>
+
+    <property>
+        <name>dfs.ha.nn.not-become-active-in-safemode</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.ha.automatic-failover.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>ha.zookeeper.quorum</name>
+        <value>master1:2181,master2:2181,master3:2181</value>
+    </property>
+
+    <property>
+            <name>dfs.namenode.name.dir</name>
+            <value>/hadoop/dfs/name</value>
+    </property>
+
+    <property>
+            <name>dfs.datanode.data.dir</name>
+            <value>/hadoop/dfs/data</value>
+    </property>
+
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>dfs.namenode.heartbeat.recheck-interval</name>
+        <value>15000</value> 
+        <description>Time in milliseconds for NameNode to check heartbeat expiry (default is 5 minutes).</description>
+    </property>
+
+    <property>
+        <name>dfs.heartbeat.interval</name>
+        <value>3</value> 
+        <description>Time in seconds between DataNode heartbeats (default is 3).</description>
+    </property>
+
+    <property>
+        <name>dfs.namenode.heartbeat.expiry.interval</name>
+        <value>12</value> 
+        <description>How many heartbeats a DataNode can miss before being marked as dead (default is 10).</description>
+    </property>
+
+</configuration>

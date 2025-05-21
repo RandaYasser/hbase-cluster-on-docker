@@ -1,0 +1,35 @@
+<configuration>
+<property>
+    <name>hbase.rootdir</name>
+    <value>hdfs://hdcluster:8020/hbase</value>
+  </property>
+  <property>
+    <name>hbase.log.dir</name>
+    <value>/usr/local/hbase/logs</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.quorum</name>
+    <value>master1,master2,master3</value>
+  </property>
+  <property>   
+    <name>hbase.cluster.distributed</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hbase.backup.masters</name>
+    <value>hmaster2</value>
+    </property>
+    <property>
+  <name>hbase.wal.provider</name>
+  <value>filesystem</value>
+</property>
+<property>
+    <name>hbase.unsafe.regionserver.hostname.disable.master.reversedns</name>
+    <value>true</value>
+    <description>This config is for experts: don't set its value unless you really know what you are doing.
+    When set to true, regionserver will use the current node hostname for the servername and HMaster will
+    skip reverse DNS lookup and use the hostname sent by regionserver instead. Note that this config and
+    hbase.unsafe.regionserver.hostname are mutually exclusive. See https://issues.apache.org/jira/browse/HBASE-18226
+    for more details.</description>
+  </property>
+  </configuration>

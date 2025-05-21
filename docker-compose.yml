@@ -1,0 +1,218 @@
+services:
+  master1:
+    image: hadoop-master
+    container_name: master1
+    hostname: master1
+    environment:
+      - NODE_TYPE=master
+      - NODE_NUM=1
+      - ZK_ID=1
+    networks:
+      hadoop_network:
+        aliases:
+          - zk1.example.com
+    ports:
+      - "19870:9870"
+      - "18088:8088"
+    volumes:
+      - namenode_data1:/hadoop/dfs/name
+      - journalnode_data1:/hadoop/dfs/journal
+      - zookeeper_data1:/usr/local/zookeeper/data
+      - ./code:/code
+      - ./data:/data
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL","nc -zw 2 master1 8020"]
+      interval: 30s
+      timeout: 240s
+      retries: 10
+      start_period: 20s
+ 
+
+    
+  master2:
+    image: hadoop-master
+    container_name: master2
+    hostname: master2
+    restart: always
+    environment:
+      - NODE_TYPE=master
+      - NODE_NUM=2
+      - ZK_ID=2
+    networks:
+      hadoop_network:
+        aliases:
+          - zk2.example.com
+    ports:
+      - "29870:9870"
+      - "28088:8088"
+    volumes:
+      - namenode_data2:/hadoop/dfs/name
+      - journalnode_data2:/hadoop/dfs/journal
+      - zookeeper_data2:/usr/local/zookeeper/data
+      - ./code:/code
+      - ./data:/data
+    healthcheck:
+      test: ["CMD-SHELL","nc -zw 2 master2 2181"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+   
+  master3:
+    image: hadoop-master
+    container_name: master3
+    hostname: master3
+    restart: always
+    environment:
+      - NODE_TYPE=master
+      - NODE_NUM=3
+      - ZK_ID=3
+    networks:
+      hadoop_network:
+        aliases:
+          - zk3.example.com
+    ports:
+      - "39870:9870"
+      - "38088:8088"
+    volumes:
+      - namenode_data3:/hadoop/dfs/name
+      - journalnode_data3:/hadoop/dfs/journal
+      - zookeeper_data3:/usr/local/zookeeper/data
+      - ./code:/code
+      - ./data:/data
+    healthcheck:
+      test: ["CMD-SHELL","nc -zw 2 master3 2181"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+  hmaster1:
+    image: hadoop-hbase-image
+    container_name: hmaster1
+    hostname: hmaster1
+    networks:
+      - hadoop_network
+    ports:
+      - "16010:16010" 
+    environment:
+      - NODE_TYPE=master
+      - NODE_NUM=1
+    depends_on:
+      master1:
+        condition: service_healthy
+      master2:
+        condition: service_healthy
+      master3:
+        condition: service_healthy
+
+
+
+  hmaster2:
+    image: hadoop-hbase-image
+    container_name: hmaster2
+    hostname: hmaster2
+    networks:
+      - hadoop_network
+    ports:
+      - "26010:16010"
+    environment:
+      - NODE_TYPE=master
+      - NODE_NUM=2
+    depends_on:
+      master1:
+        condition: service_healthy
+      master2:
+        condition: service_healthy
+      master3:
+        condition: service_healthy
+
+
+  regionserver1:
+    image: hadoop-hbase-image
+    container_name: regionserver1
+    hostname: regionserver1
+    networks:
+      - hadoop_network
+    ports:
+      - "16030:16030" 
+    depends_on:
+      master1:
+        condition: service_healthy
+      master2:
+        condition: service_healthy
+      master3:
+        condition: service_healthy    
+
+
+  regionserver2:
+    image: hadoop-hbase-image
+    container_name: regionserver2
+    hostname: regionserver2
+    networks:
+      - hadoop_network
+    ports:
+      - "26030:16030" 
+    volumes:
+      - ./code:/code
+      - ./data:/data
+    depends_on:
+      master1:
+        condition: service_healthy
+      master2:
+        condition: service_healthy
+      master3:
+        condition: service_healthy
+
+  regionserver3:
+    image: hadoop-hbase-image
+    container_name: regionserver3
+    hostname: regionserver3
+    networks:
+      - hadoop_network
+    ports:
+      - "36030:16030" 
+    volumes:
+      - ./code:/code
+      - ./data:/data
+    depends_on:
+      master1:
+        condition: service_healthy
+      master2:
+        condition: service_healthy
+      master3:
+        condition: service_healthy
+
+
+
+networks:
+  hadoop_network:
+    driver: bridge
+    name: hadoop_network
+
+volumes:
+  namenode_data1:
+    name: namenode_data1
+  namenode_data2:
+    name: namenode_data2
+  namenode_data3:
+    name: namenode_data3
+  journalnode_data1:
+    name: journalnode_data1
+  journalnode_data2:
+    name: journalnode_data2
+  journalnode_data3:
+    name: journalnode_data3
+  zookeeper_data1:
+    name: zookeeper_data1
+  zookeeper_data2:
+    name: zookeeper_data2
+  zookeeper_data3:
+    name: zookeeper_data3
+  datanode_data1:
+    name: datanode_data1
+  datanode_data2:
+    name: datanode_data2
+
+  
