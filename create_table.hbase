@@ -1,0 +1,48 @@
+# File: create_table.hbase
+# Description: Creates the webtable with four column families as per requirements
+# Optimized for random-read-heavy workload with appropriate cache settings
+
+disable 'webtable' if exists 'webtable'
+drop 'webtable' if exists 'webtable'
+
+# Create table with four column families optimized for random reads
+# BLOCKSIZE reduced to 64KB for better random access
+# BLOOMFILTER set to ROWCOL for all families to reduce HFile reads
+# IN_MEMORY set to true for frequently accessed families
+# BLOCKCACHE disabled for inlinks (less frequently accessed)
+
+create 'webtable', 
+  {NAME => 'content', 
+   BLOOMFILTER => 'ROW',         
+   BLOCKSIZE => 65536,
+   BLOCKCACHE => true,
+   IN_MEMORY => true,
+   VERSIONS => 3,
+   TTL => 7776000},        
+
+  {NAME => 'metadata', 
+   BLOOMFILTER => 'ROW',         
+   BLOCKSIZE => 16384,
+   BLOCKCACHE => true,
+   VERSIONS => 1,
+   TTL => 2147483647},      
+
+  {NAME => 'outlinks', 
+   BLOOMFILTER => 'ROWCOL',       
+   BLOCKSIZE => 32768,
+   VERSIONS => 2,
+   TTL => 15552000},       
+
+  {NAME => 'inlinks', 
+   BLOOMFILTER => 'ROWCOL',      
+   BLOCKSIZE => 32768,
+   VERSIONS => 2,
+   TTL => 15552000},
+
+
+  {SPLITS => [
+    '00', '20', '40', '60', '80', 'a0', 'c0', 'e0',  
+    '10', '30', '50', '70', '90', 'b0', 'd0', 'f0'   
+  ]}
+
+describe 'webtable' 
